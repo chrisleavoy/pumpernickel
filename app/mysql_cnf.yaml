@@ -1,0 +1,28 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql
+data:
+#@ if data.values.k8s_env == "chris-aws":
+  kube.cnf: |
+    [mysqld]
+    server-id=1
+    binlog_format=MIXED
+    log-bin = mysql-bin
+    relay_log=relay-bin
+    log-slave-updates = on
+    gtid_mode=ON
+    enforce_gtid_consistency=1
+#@ else:
+  kube.cnf: |
+    [mysqld]
+    server-id=2
+    binlog_format=MIXED
+    log-bin = mysql-bin
+    relay_log=relay-bin
+    log-slave-updates = on
+    gtid_mode=ON
+    enforce_gtid_consistency=1
+#@ end

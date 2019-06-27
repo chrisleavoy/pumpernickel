@@ -1,0 +1,19 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  annotations:
+#@ if data.values.k8s_env == "chris-aws":
+    service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
+#@ else:
+    cloud.google.com/load-balancer-type: "Internal"
+#@ end
+spec:
+  type: LoadBalancer
+  selector:
+    app: mysql
+  ports:
+  - protocol: TCP
+    port: 3306

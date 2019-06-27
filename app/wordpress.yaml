@@ -1,0 +1,42 @@
+#@ load("@ytt:data", "data")
+
+#@ def labels():
+app: wordpress
+#@ end
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  labels: #@ labels()
+spec:
+  selector:
+    matchLabels: #@ labels()
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels: #@ labels()
+    spec:
+      containers:
+      - image: wordpress:4.8-apache
+        name: wordpress
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: mysql
+        - name: WORDPRESS_DB_PASSWORD
+          value: "password"
+        ports:
+        - containerPort: 80
+          name: wordpress
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+spec:
+  ports:
+    - port: #@ data.values.service_port
+  selector: #@ labels()
+  type: LoadBalancer

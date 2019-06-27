@@ -1,0 +1,4 @@
+#@data/values
+---
+service_port: 80
+k8s_env: chris-aws
